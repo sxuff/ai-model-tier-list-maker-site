@@ -58,10 +58,13 @@ function migrate(s,preset){
  s.models=s.models.filter(m=>!REPLACED[m[0]]).map(m=>presetModels[m[0]]?clone(presetModels[m[0]]):m);
  const have=new Set(s.models.map(m=>m[0]));
  const placed=new Set(s.tiers.flatMap(t=>t.items));
- const unranked=s.tiers.find(t=>t.id==='unranked')||s.tiers[s.tiers.length-1];
+ let unranked=s.tiers.find(t=>t.id==='unranked');
  preset.models.forEach(m=>{
   if(!have.has(m[0]))s.models.push(clone(m));
-  if(!placed.has(m[0]))unranked.items.push(m[0]);
+  if(!placed.has(m[0])){
+   if(!unranked){unranked={id:'unranked',label:'Unranked',color:'#60646c',items:[]};s.tiers.push(unranked);}
+   unranked.items.push(m[0]);
+  }
  });
  s.subtitle=preset.subtitle;
  return s;
